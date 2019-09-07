@@ -1,0 +1,37 @@
+.set NUMERO_UM 1
+.org 0x300
+
+_um:     .word NUMERO_UM
+
+var_1:  .word 10
+var_2:  .word 100
+var_3:  .word 1000
+
+.org 0x100
+loop:
+    ld          var_1
+outro:
+    ldinv       var_2
+mais_um_rotulo:
+    ldabs       var_3
+    add         100
+    sub         0x100
+    addabs      _um
+    subabs      _um
+    ldmq
+    ldmqmx      _um
+    mult        var_2
+    div         var_3
+    jump        loop
+    jump        outro
+    jump        0x130
+    jge         loop
+    jge         0x31
+    jge         outro
+    storend     0x100
+    storend     0x101
+    storend     mais_um_rotulo
+    lsh
+    rsh
+    store       var_3
+# Comentario final

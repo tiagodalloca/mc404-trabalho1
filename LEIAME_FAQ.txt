@@ -1,0 +1,83 @@
+Trabalho 1 -- MC 404 -- MONTADOR PARA O IAS
+
+Este arquivo possui informações diversas sobre o trabalho.
+
+O trabalho deve ser escrito na linguagem C (podendo utilizar as bibliotecas padrões da linguagem).
+Uma suite de compilação e teste é disponibilizada pelo arquivo montador.sh. A estrutura do diretório é mostrada abaixo:
+
+codigo_base:
+    aux: Contém os arquivos axiliares para gerar main.c da parte 1 e da parte 2 (não há necessidade de mexer nesser arquivos)
+    bin: Contém o arquivo binário do montador, gerado a partirso seu código, para parte 1 e parte2 (montador-p1.x, montador-p2.x, respectivamente)
+    resultados: Contém os resultados esperados dos testes abertos para a parte 1 e para a parte 2
+    saidas: Contém os resultados dos testes executados com o seu programa
+    src: Deve conter os arquivos de cabeçalho (.h) e de código fonte do seu programa (.c). Caso crie novos arquivos, adicione-os neste diretório
+    testes: Contém os arquivos de entrada para realização dos testes abertos
+    montador.sh
+        Utilize este arquivo para limpar, compilar, executar e testar seu programa.
+        Voce deve executar o script informando se deseja realizar as operações da parte1 ou parte2 da seguinte forma:
+            ./montador.sh parte1 ou ./montador.sh parte2
+        Além disso, o script possui os seguintes parametros opcionais:
+        -l ou --limpar : Limpa os arquivos
+        -c ou --compilar : Compila seu programa (arquivos no diretório src) e gera o binário (no diretório bin)
+        -e ou --executar : Executa seu programa com os arquivos de entrada do diretório testes. As saídas geradas no diretório saidas
+        -t ou --testar: Testa as saidas com os resultados esperados da pasta resultados. Um arquivo tests.results.parte1 ou tests.results.parte2 é gerado como relatório para parte1 e parte2, respectivamente
+
+        Desta forma, para compilar a parte1, podemos utilizar o seguinte comando:
+        ./montador.sh --compilar parte1
+        O mesmo para parte2:
+        ./montador.sh --compilar parte2
+
+        Os parametros opcionais podem ser passados juntos (e em qualquer ordem). Sempre que mais de um é passado, para os parametros passados, a ordem obedecida sempre será:
+            * limpar
+            * compilar
+            * executar
+            * testar
+
+        Assim, podemos limpar, compilar, executar e testar a parte1 com o comando:
+        ./montador.sh --compilar --testar --limpar --executar parte1
+        ou, simplesmente
+        ./montador.sh -c -t -l -e parte1
+
+        O mesmo é valido para a parte2
+
+
+O trabalho é dividido em duas partes: (1) processamento da entrada e (2) emissão do mapa de memória
+    (1) Nesta parte, você deve implementar a função 'int processarEntrada(char*, unsigned);' do arquivo processarEntrada.c. Você pode utilizar funções e arquivos auxiliares (colocando-os na pasta src)
+    (Nota: O arquivo main.c a ser utilizada para parte 1 e parte 2 será o disponibilizado. Portanto não adicione coisas nele, nem em token.c/token.h)
+    (Nota: O main.c, chama as funções processarEntrada e emitirMapaDeMemoria, implementadas por você. Lembre-se de retornar 1 ou 0 e imprimir o erro em stderr)
+    Quando seu código retorna 0, na função processar entrada da parte 1, a lista de tokens é então impressa (veja main.c)
+
+    EXEMPLO/DICAS:
+        Supondo o código:
+
+        .org 10         #linha 1
+        add 0x10        #linha 2
+
+    * Primeiro delimite os caracteres da entrada por seus espaços (tabulações e troca de linhas). Comentários são ignorados:
+        palavra: ".org"
+        palavra: "10"
+        palavra: "add"
+        palavra: "0x10"
+
+    * Determine qual token referente a cada palavra e crie e adicione-o na lista de tokens (veja arquivo token.h):
+        ".org"  -> criar/alocar um token com: {tipo: Diretiva, palavra: ".org", linha: 1}
+        "10"    -> criar/alocar um token {tipo: Decimal, palavra: "10", linha: 1}
+        "add"   -> criar/alocar um token com: {tipo: Instrucao, palavra: "add", linha: 2}
+        "0x10   -> criar/alocar um token {tipo: Hexadecimal, palavra: "0x10", linha: 2} -
+    * Nesta fase, você pode verificar erros lexicos!
+    * Nota: A lista de Tokens já está implementada em token.c, sendo um vetor estatico de Tokens (maximo 4096 elementos).  Sempre que adicionarToken() é utilizado, uma token é adicionado a lista.
+
+    * Posteriormente, você pode verificar todos os tokens coletados, em ordem e verificar por erros gramaticais....
+    * Se houver erros lexicos/gramaticais, imprima o Erro na saída de erro (stderr) e retorne 1 na função processarEntrada();
+    * Caso contrário, retorne 0 na função processarEntrada. Ao retornar 0, para parte 1, a lista de tokens será impressa (chamada pela função main)
+
+    * Você pode manter tabelas auxiliares para determinar os simbolos já definidos, ou não definidos...
+
+-------------------------------------------------------
+
+    (2) * Para a parte 2 você deve checar por erros semanticos (rotulos utilizados e não declarados), se houver erros, imprima em stderr e retorne 1 na função emitirMapaDeMemoria()
+    * Utilize os tokens adicionados a lista (da parte 1), utilizando a função recuperaToken()
+
+-------------------------------------------------------
+
+A submissão deve ser feita no Susy dos arquivos .c e .h, e não deve passar de 1MB

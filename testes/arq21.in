@@ -1,0 +1,19 @@
+.SET TREZENTOS 300
+
+.org 0X300
+    um: .word 1
+
+.align 16
+    vetor: .wfill 15 TREZENTOS
+
+.org 0
+    ld vetor
+altend:
+    add um
+    store vetor
+    add 10
+    storend altend
+    jge 0
+    rsh
+    lsh
+    jump 400

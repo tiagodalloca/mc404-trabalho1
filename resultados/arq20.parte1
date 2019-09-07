@@ -1,0 +1,113 @@
+Lista de tokens
+Token 0
+	Tipo: 1001 (Diretiva)
+	Palavra: ".org"
+	Linha: 1
+Token 1
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0x100"
+	Linha: 1
+Token 2
+	Tipo: 1001 (Diretiva)
+	Palavra: ".wfill"
+	Linha: 2
+Token 3
+	Tipo: 1004 (Decimal)
+	Palavra: "20"
+	Linha: 2
+Token 4
+	Tipo: 1004 (Decimal)
+	Palavra: "9"
+	Linha: 2
+Token 5
+	Tipo: 1001 (Diretiva)
+	Palavra: ".set"
+	Linha: 4
+Token 6
+	Tipo: 1005 (Nome)
+	Palavra: "valor"
+	Linha: 4
+Token 7
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0xff"
+	Linha: 4
+Token 8
+	Tipo: 1001 (Diretiva)
+	Palavra: ".set"
+	Linha: 5
+Token 9
+	Tipo: 1005 (Nome)
+	Palavra: "hex"
+	Linha: 5
+Token 10
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0x64"
+	Linha: 5
+Token 11
+	Tipo: 1001 (Diretiva)
+	Palavra: ".set"
+	Linha: 6
+Token 12
+	Tipo: 1005 (Nome)
+	Palavra: "dec"
+	Linha: 6
+Token 13
+	Tipo: 1004 (Decimal)
+	Palavra: "100"
+	Linha: 6
+Token 14
+	Tipo: 1001 (Diretiva)
+	Palavra: ".org"
+	Linha: 8
+Token 15
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0x200"
+	Linha: 8
+Token 16
+	Tipo: 1002 (Definicao Rotulo)
+	Palavra: "var:"
+	Linha: 9
+Token 17
+	Tipo: 1001 (Diretiva)
+	Palavra: ".wfill"
+	Linha: 10
+Token 18
+	Tipo: 1004 (Decimal)
+	Palavra: "15"
+	Linha: 10
+Token 19
+	Tipo: 1005 (Nome)
+	Palavra: "valor"
+	Linha: 10
+Token 20
+	Tipo: 1001 (Diretiva)
+	Palavra: ".align"
+	Linha: 12
+Token 21
+	Tipo: 1004 (Decimal)
+	Palavra: "32"
+	Linha: 12
+Token 22
+	Tipo: 1000 (Instrucao)
+	Palavra: "ld"
+	Linha: 14
+Token 23
+	Tipo: 1005 (Nome)
+	Palavra: "var"
+	Linha: 14
+Token 24
+	Tipo: 1000 (Instrucao)
+	Palavra: "add"
+	Linha: 15
+Token 25
+	Tipo: 1005 (Nome)
+	Palavra: "dec"
+	Linha: 15
+Token 26
+	Tipo: 1000 (Instrucao)
+	Palavra: "sub"
+	Linha: 16
+Token 27
+	Tipo: 1005 (Nome)
+	Palavra: "hex"
+	Linha: 16

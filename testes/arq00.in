@@ -1,0 +1,9 @@
+vetor1:
+vetor2:   .word 0x10 # (hexadecimal) Comentario apos diretiva
+vetor3:   .word 10 # (Decimal) Comentario apos diretiva
+
+.word 10
+.word 10  # Comentario apos diretiva
+# Comentario sozinho
+
+# vetor4: ADD 1

@@ -1,0 +1,3 @@
+ADD 0x0000
+
+SUB 123cactus #Erro lexico: decimal invalido

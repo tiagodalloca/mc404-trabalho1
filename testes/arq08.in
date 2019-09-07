@@ -1,0 +1,4 @@
+contador:
+    .word 1
+v@riable:           #ERRO LEXICO
+    .word 2

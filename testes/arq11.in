@@ -1,0 +1,3 @@
+VAR: .word 100
+
+.set    #Erro: A diretiva .set precisa de dois parametros...

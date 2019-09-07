@@ -1,0 +1,4 @@
+.ORG 0
+    ld 0x10
+    add 10
+    sub var_desconhecida

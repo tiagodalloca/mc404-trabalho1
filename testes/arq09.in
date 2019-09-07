@@ -1,0 +1,11 @@
+#Defines
+.set DEFAULT 16
+
+#variables
+var_0:  .word DEFAULT
+var_1:  .word 0x123
+
+#Code
+.org 0x100
+LD var_1
+SUB var_0

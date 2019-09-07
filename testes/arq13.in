@@ -1,0 +1,6 @@
+# Erro Gramatical na linha 6. Parametros invalidos
+
+var1:
+    .word 10
+var2:
+    .word .word

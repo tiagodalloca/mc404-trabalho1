@@ -1,0 +1,33 @@
+Lista de tokens
+Token 0
+	Tipo: 1000 (Instrucao)
+	Palavra: "add"
+	Linha: 2
+Token 1
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0x10"
+	Linha: 2
+Token 2
+	Tipo: 1000 (Instrucao)
+	Palavra: "sub"
+	Linha: 3
+Token 3
+	Tipo: 1004 (Decimal)
+	Palavra: "20"
+	Linha: 3
+Token 4
+	Tipo: 1000 (Instrucao)
+	Palavra: "add"
+	Linha: 5
+Token 5
+	Tipo: 1005 (Nome)
+	Palavra: "k"
+	Linha: 5
+Token 6
+	Tipo: 1000 (Instrucao)
+	Palavra: "sub"
+	Linha: 6
+Token 7
+	Tipo: 1004 (Decimal)
+	Palavra: "15"
+	Linha: 6

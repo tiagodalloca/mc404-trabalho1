@@ -1,0 +1,9 @@
+var1:
+        .word 10
+var2:
+    .word 20
+
+var3:
+.word 40
+
+.align 12345678  # Erro gramatical. Valor fora do intervalo do .align (1-1023)

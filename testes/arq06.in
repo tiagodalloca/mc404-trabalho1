@@ -1,0 +1,6 @@
+.org 0x200
+var1: .word 30
+
+SUBABS 10
+
+.wfillet 50 var1 # Erro lexico: diretiva desconhecida

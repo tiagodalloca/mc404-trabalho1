@@ -1,0 +1,2 @@
+ADD 10
+.set VINTE var-1   #Erro Lexico, palavra invalida

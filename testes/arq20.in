@@ -1,0 +1,16 @@
+.org 0x100
+.wfill 20 9
+
+.set VALOR 0xFF
+.set hex 0x64
+.set dec 100
+
+.org 0x200
+var:
+.wfill 15 VALOR
+
+.align 32
+
+ld  var
+add dec
+sub hex
