@@ -1,4 +1,5 @@
 #include "montador.h"
+#include "erros.h"
 #include <stdio.h>
 
 /*
