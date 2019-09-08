@@ -1,5 +1,7 @@
+#include "token.h"
 #include "montador.h"
 #include "erros.h"
+#include "regex.h"
 #include <stdio.h>
 
 /*
@@ -24,6 +26,12 @@ const char* get_error_string (enum errors code) {
 */
 int processarEntrada(char* entrada, unsigned tamanho)
 {
-    /* printf("Você deve implementar esta função para a Parte 1.\n"); */
-    return 0;
+
+	// utilizar regex para fazer a verificação lexica
+
+	// recriar o spec para fazer a verificação gramatical
+
+	// profit ??
+	
+	return 0;
 }
