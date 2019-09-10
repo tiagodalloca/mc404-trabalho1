@@ -1,33 +1,99 @@
 #include "token.h"
 #include "montador.h"
 #include "erros.h"
-#include "regex.h"
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
 #include <stdio.h>
 
-/*
-Exemplo de erros:
-const char* get_error_string (enum errors code) {
-    switch (code) {
-        case ERR_HEXADECIMAL_NAO_VALIDO:
-            return "LEXICO: Numero Hexadecimal Inválido!";
-        case ERRO_ROTULO_JA_DEFINIDO:
-            return "GRAMATICAL: ROTULO JA FOI DEFINIDO!";
-        case ERR_DIRETIVA_NAO_VALIDA:
-            return "LEXICO: Diretiva não válida";
-*/
+
+char* strappc (char *str, char c) {
+	char str_c[2];
+	str_c[0] = c;
+	str_c[1] = '\0';
+	return strcat(str, str_c);
+}
+
+char regexMatch(const char *regex_str, char *palavra) {
+	regex_t regex;
+	int aux;
+	char msgbuf[100];
+
+	aux = regcomp(&regex, regex_str, REG_EXTENDED);
+	if (aux) {
+		fprintf(stderr, "Falha ao compilar regex :\\\n");
+		exit(1);
+		return 0;
+	}
+
+	aux = regexec(&regex, palavra, 0, NULL, 0);
+	if (!aux) return 1;
+	if (aux == REG_NOMATCH) return 0;
+	else {
+		regerror(aux, &regex, msgbuf, sizeof(msgbuf));
+		fprintf(stderr, "Falhar ao fazer match no regex: %s\n", msgbuf);
+		exit(1);
+		return 0;
+	}
+	return 0;
+}
+
+char addToken(char *palavra, unsigned linha) {
+	for (int i = 0; i < num_tipos_token; i++) {
+		if (regexMatch(tokenRegexes[i], palavra)){
+			adicionarToken(i + Instrucao, palavra, linha);
+			return 1;
+		}
+	}
+
+	return 0;
+}
 
 /*
-    ---- Você Deve implementar esta função para a parte 1.  ----
-    Essa função é chamada pela main em main.c
-    Entrada da função: arquivo de texto lido e seu tamanho
-    Retorna:
-        * 1 caso haja erro na montagem; (imprima o erro em stderr)
-        * 0 caso não haja erro.         (Caso não haja erro, na parte 1, ao retornar desta função, a lista de Tokens (adicionados utilizando a função adicionarToken()) é impressa)
-*/
-int processarEntrada(char* entrada, unsigned tamanho)
-{
+	---- Você Deve implementar esta função para a parte 1.  ----
+	Essa função é chamada pela main em main.c
+	Entrada da função: arquivo de texto lido e seu tamanho
+	Retorna:
+	* 1 caso haja erro na montagem; (imprima o erro em stderr)
+	* 0 caso não haja erro.         (Caso não haja erro, na parte 1, ao retornar desta função, a lista de Tokens (adicionados utilizando a função adicionarToken()) é impressa)
+	*/
+int processarEntrada(char* entrada, unsigned tamanho) {
 
-	// utilizar regex para fazer a verificação lexica
+	// utilizar regex para fazer a verificação lexica nas palavras e adicionar na lista de tokens
+
+
+	char *palavra = (char*) malloc(sizeof(char)*256);
+	unsigned linha = 1;
+
+	for (unsigned i = 0; i < tamanho; i++) {
+		
+		char c = entrada[i];
+
+		// COMENTÁRIO
+		if (c == '#')
+			while ((c = entrada[++i]) != '\n' && i < tamanho) {}
+			 
+
+		if (! strchr(" \n", c))
+					strappc(palavra, c);
+		
+		else {
+			if (palavra[0]) {
+				char *palavra_copia = (char*) malloc(sizeof(char) * 256);
+				strcpy(palavra_copia, palavra);
+				if (addToken(palavra_copia, linha))
+						palavra[0] = '\0';
+					else{
+						char err_str[1000];
+						get_erro_lexico_string(err_str, O_ERRO_LEXICO, linha, palavra);
+						fprintf(stderr, "%s", err_str);
+						return 1;
+					}
+			}
+
+			if (c == '\n') linha++;
+		}
+	}
 
 	// recriar o spec para fazer a verificação gramatical
 

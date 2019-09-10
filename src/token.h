@@ -3,11 +3,13 @@
 
 #define MAXTOKENS 4096
 
+extern const short num_tipos_token;
+extern const char *tokenRegexes[];
 /*
-    * Este arquivo contém as definições da estrutura Token.
-    * Uma lista estatica (vetor), de 4096 Tokens, já esta implementada (token.c) e pronta para ser utilizada.
-    * Para manipular a lista de tokens, utilize as funções abaixo adicionarToken, removerToken, recuperaToken, imprimeListaTokens, getNumberOfTokens
-    * Este arquivo também será testado como é, portanto, não altere as funções e a estrutura deste arquivo e do seu respectivo código fonte (token.c)
+ * Este arquivo contém as definições da estrutura Token.
+ * Uma lista estatica (vetor), de 4096 Tokens, já esta implementada (token.c) e pronta para ser utilizada.
+ * Para manipular a lista de tokens, utilize as funções abaixo adicionarToken, removerToken, recuperaToken, imprimeListaTokens, getNumberOfTokens
+ * Este arquivo também será testado como é, portanto, não altere as funções e a estrutura deste arquivo e do seu respectivo código fonte (token.c)
 */
 
 typedef enum TipoDoToken {Instrucao=1000, Diretiva, DefRotulo, Hexadecimal, Decimal, Nome} TipoDoToken;

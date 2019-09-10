@@ -3,17 +3,29 @@
 #include <stdlib.h>
 #include <string.h>
 
+const short num_tipos_token = 6;
+const char *tokenRegexes[] =
+	{
+	 "^(LD|LDINV|LDABS|LDMQ|LDMQMX|STORE|JUMP|JGE|ADD|ADDABS|SUB|SUBASS|MULT|DIV|LSH|RSH|STOREND)$",
+	 "^\\.(set|org|align|wfill|word)$",
+	 "^[A-Za-z_][A-Za-z0-9_]*\\:$",
+	 "^\\0\\x[0-9|A-F|a-f]{1,12}$", 
+	 "^[\\-|\\=+]?[0-9]+$",
+	 "^[A-Za-z_][A-Za-z0-9_]*$"
+	};
+
 static Token tokens[MAXTOKENS];
 static unsigned tamTokens = 0;
 
-char *tokenNames [] = {
-    "Instrucao",
-    "Diretiva",
-    "Definicao Rotulo",
-    "Hexadecimal",
-    "Decimal",
-    "Nome"
-};
+char *tokenNames [] =
+	{
+	 "Instrucao",
+	 "Diretiva",
+	 "Definicao Rotulo",
+	 "Hexadecimal",
+	 "Decimal",
+	 "Nome"
+	};
 
 unsigned getNumberOfTokens() {
   return tamTokens;
