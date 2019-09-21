@@ -1,0 +1,33 @@
+Lista de tokens
+Token 0
+	Tipo: 1001 (Diretiva)
+	Palavra: ".set"
+	Linha: 2
+Token 1
+	Tipo: 1005 (Nome)
+	Palavra: "VINTE"
+	Linha: 2
+Token 2
+	Tipo: 1004 (Decimal)
+	Palavra: "20"
+	Linha: 2
+Token 3
+	Tipo: 1001 (Diretiva)
+	Palavra: ".org"
+	Linha: 4
+Token 4
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0x200"
+	Linha: 4
+Token 5
+	Tipo: 1001 (Diretiva)
+	Palavra: ".wfill"
+	Linha: 6
+Token 6
+	Tipo: 1004 (Decimal)
+	Palavra: "40"
+	Linha: 6
+Token 7
+	Tipo: 1005 (Nome)
+	Palavra: "VINTE"
+	Linha: 6

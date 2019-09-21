@@ -2,9 +2,6 @@
 #define TOKEN_H
 
 #define MAXTOKENS 4096
-
-extern const short num_tipos_token;
-extern const char *tokenRegexes[];
 /*
  * Este arquivo contém as definições da estrutura Token.
  * Uma lista estatica (vetor), de 4096 Tokens, já esta implementada (token.c) e pronta para ser utilizada.

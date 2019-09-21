@@ -1,0 +1,133 @@
+Lista de tokens
+Token 0
+	Tipo: 1001 (Diretiva)
+	Palavra: ".SET"
+	Linha: 1
+Token 1
+	Tipo: 1005 (Nome)
+	Palavra: "TREZENTOS"
+	Linha: 1
+Token 2
+	Tipo: 1004 (Decimal)
+	Palavra: "300"
+	Linha: 1
+Token 3
+	Tipo: 1001 (Diretiva)
+	Palavra: ".org"
+	Linha: 3
+Token 4
+	Tipo: 1003 (Hexadecimal)
+	Palavra: "0X300"
+	Linha: 3
+Token 5
+	Tipo: 1002 (Definicao Rotulo)
+	Palavra: "um:"
+	Linha: 4
+Token 6
+	Tipo: 1001 (Diretiva)
+	Palavra: ".word"
+	Linha: 4
+Token 7
+	Tipo: 1004 (Decimal)
+	Palavra: "1"
+	Linha: 4
+Token 8
+	Tipo: 1001 (Diretiva)
+	Palavra: ".align"
+	Linha: 6
+Token 9
+	Tipo: 1004 (Decimal)
+	Palavra: "16"
+	Linha: 6
+Token 10
+	Tipo: 1002 (Definicao Rotulo)
+	Palavra: "vetor:"
+	Linha: 7
+Token 11
+	Tipo: 1001 (Diretiva)
+	Palavra: ".wfill"
+	Linha: 7
+Token 12
+	Tipo: 1004 (Decimal)
+	Palavra: "15"
+	Linha: 7
+Token 13
+	Tipo: 1005 (Nome)
+	Palavra: "TREZENTOS"
+	Linha: 7
+Token 14
+	Tipo: 1001 (Diretiva)
+	Palavra: ".org"
+	Linha: 9
+Token 15
+	Tipo: 1004 (Decimal)
+	Palavra: "0"
+	Linha: 9
+Token 16
+	Tipo: 1000 (Instrucao)
+	Palavra: "ld"
+	Linha: 10
+Token 17
+	Tipo: 1005 (Nome)
+	Palavra: "vetor"
+	Linha: 10
+Token 18
+	Tipo: 1002 (Definicao Rotulo)
+	Palavra: "altend:"
+	Linha: 11
+Token 19
+	Tipo: 1000 (Instrucao)
+	Palavra: "add"
+	Linha: 12
+Token 20
+	Tipo: 1005 (Nome)
+	Palavra: "um"
+	Linha: 12
+Token 21
+	Tipo: 1000 (Instrucao)
+	Palavra: "store"
+	Linha: 13
+Token 22
+	Tipo: 1005 (Nome)
+	Palavra: "vetor"
+	Linha: 13
+Token 23
+	Tipo: 1000 (Instrucao)
+	Palavra: "add"
+	Linha: 14
+Token 24
+	Tipo: 1004 (Decimal)
+	Palavra: "10"
+	Linha: 14
+Token 25
+	Tipo: 1000 (Instrucao)
+	Palavra: "storend"
+	Linha: 15
+Token 26
+	Tipo: 1005 (Nome)
+	Palavra: "altend"
+	Linha: 15
+Token 27
+	Tipo: 1000 (Instrucao)
+	Palavra: "jge"
+	Linha: 16
+Token 28
+	Tipo: 1004 (Decimal)
+	Palavra: "0"
+	Linha: 16
+Token 29
+	Tipo: 1000 (Instrucao)
+	Palavra: "rsh"
+	Linha: 17
+Token 30
+	Tipo: 1000 (Instrucao)
+	Palavra: "lsh"
+	Linha: 18
+Token 31
+	Tipo: 1000 (Instrucao)
+	Palavra: "jump"
+	Linha: 19
+Token 32
+	Tipo: 1004 (Decimal)
+	Palavra: "400"
+	Linha: 19

@@ -1,7 +1,6 @@
 #include "token.h"
 #include "montador.h"
-#include "erros.h"
-#include "verificador_gramatical.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
@@ -22,7 +21,7 @@ char regexMatch(const char *regex_str, char *palavra) {
 
 	aux = regcomp(&regex, regex_str, REG_EXTENDED);
 	if (aux) {
-		fprintf(stderr, "Falha ao compilar regex :\\\n");
+		fprintf(stderr, "Falha ao compilar regex \"%s\".\n", regex_str);
 		return 1;
 		return 0;
 	}
@@ -32,7 +31,7 @@ char regexMatch(const char *regex_str, char *palavra) {
 	if (aux == REG_NOMATCH) return 0;
 	else {
 		regerror(aux, &regex, msgbuf, sizeof(msgbuf));
-		fprintf(stderr, "Falhar ao fazer match no regex: %s\n", msgbuf);
+		fprintf(stderr, "Falhar ao fazer match no regex (%s): %s\n", regex_str, msgbuf);
 		return 1;
 		return 0;
 	}
@@ -85,8 +84,11 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 				if (addToken(palavra_copia, linha))
 						palavra[0] = '\0';
 					else{
-						get_erro_lexico_string(err_str, linha, palavra);
-						fprintf(stderr, "%s", err_str);
+						get_erro_lexico_string(err_str, linha);
+						fprintf(stderr, "%s\n", err_str);
+
+						free(palavra);
+						
 						return 1;
 					}
 			}
@@ -95,9 +97,11 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 		}
 	}
 
+	free(palavra);
+
 	// recriar o spec para fazer a verificação gramatical
 
-  unsigned token_count = getNumberOfTokens();
+	unsigned token_count = getNumberOfTokens();
 	
 	if (token_count == 0)
 		return 0;
@@ -110,7 +114,7 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 
 	if (token_count == 1 && verificarArgumentoToken(t, pos, arg) != 0){
 		get_erro_gramatical_string(err_str, t.linha);
-		fprintf(stderr, "%s", err_str);
+		fprintf(stderr, "%s\n", err_str);
 		return 1;
 	}
 
@@ -139,14 +143,14 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 		}
 		else if (analiseRet == -1) {			
 			get_erro_gramatical_string(err_str, t.linha);
-			fprintf(stderr, "%s", err_str);
+			fprintf(stderr, "%s\n", err_str);
 			return 1;
 		}
 	}
 
 	if (analiseRet == 2 || ((analiseRet == 0 || (analiseRet == 1 && !isProxToken)) && verificarArgumentoToken(t, 1, t) != 0)){
 		get_erro_gramatical_string(err_str, t.linha);
-		fprintf(stderr, "%s", err_str);
+		fprintf(stderr, "%s\n", err_str);
 		return 1;
 	}
 
