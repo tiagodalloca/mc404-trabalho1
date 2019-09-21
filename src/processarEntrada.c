@@ -1,6 +1,7 @@
 #include "token.h"
 #include "montador.h"
 #include "erros.h"
+#include "verificador_gramatical.h"
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
@@ -22,7 +23,7 @@ char regexMatch(const char *regex_str, char *palavra) {
 	aux = regcomp(&regex, regex_str, REG_EXTENDED);
 	if (aux) {
 		fprintf(stderr, "Falha ao compilar regex :\\\n");
-		exit(1);
+		return 1;
 		return 0;
 	}
 
@@ -32,7 +33,7 @@ char regexMatch(const char *regex_str, char *palavra) {
 	else {
 		regerror(aux, &regex, msgbuf, sizeof(msgbuf));
 		fprintf(stderr, "Falhar ao fazer match no regex: %s\n", msgbuf);
-		exit(1);
+		return 1;
 		return 0;
 	}
 	return 0;
@@ -58,9 +59,9 @@ char addToken(char *palavra, unsigned linha) {
 	* 0 caso não haja erro.         (Caso não haja erro, na parte 1, ao retornar desta função, a lista de Tokens (adicionados utilizando a função adicionarToken()) é impressa)
 	*/
 int processarEntrada(char* entrada, unsigned tamanho) {
+	char err_str[1000];
 
 	// utilizar regex para fazer a verificação lexica nas palavras e adicionar na lista de tokens
-
 
 	char *palavra = (char*) malloc(sizeof(char)*256);
 	unsigned linha = 1;
@@ -84,8 +85,7 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 				if (addToken(palavra_copia, linha))
 						palavra[0] = '\0';
 					else{
-						char err_str[1000];
-						get_erro_lexico_string(err_str, O_ERRO_LEXICO, linha, palavra);
+						get_erro_lexico_string(err_str, linha, palavra);
 						fprintf(stderr, "%s", err_str);
 						return 1;
 					}
@@ -96,6 +96,59 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 	}
 
 	// recriar o spec para fazer a verificação gramatical
+
+  unsigned token_count = getNumberOfTokens();
+	
+	if (token_count == 0)
+		return 0;
+
+	Token t = *recuperaToken(0);
+	Token arg = t;
+	unsigned pos = 1;
+	char isProxToken = 0;
+	char analiseRet = 0;
+
+	if (token_count == 1 && verificarArgumentoToken(t, pos, arg) != 0){
+		get_erro_gramatical_string(err_str, t.linha);
+		fprintf(stderr, "%s", err_str);
+		return 1;
+	}
+
+	for (unsigned i = 1; i < getNumberOfTokens(); i++){
+		if (isProxToken){
+			t = *recuperaToken(i);
+			isProxToken = 0;
+			pos = 1;
+			continue;
+		}
+
+		arg = *recuperaToken(i);
+		analiseRet = verificarArgumentoToken(t, pos, arg);
+		if (analiseRet == 0){
+			t = arg;
+			pos = 1;
+			continue;
+		}
+		else if (analiseRet == 1){
+			isProxToken = 1;
+			continue;
+		}
+		else if (analiseRet == 2){
+			pos++;
+			continue;
+		}
+		else if (analiseRet == -1) {			
+			get_erro_gramatical_string(err_str, t.linha);
+			fprintf(stderr, "%s", err_str);
+			return 1;
+		}
+	}
+
+	if (analiseRet == 2 || ((analiseRet == 0 || (analiseRet == 1 && !isProxToken)) && verificarArgumentoToken(t, 1, t) != 0)){
+		get_erro_gramatical_string(err_str, t.linha);
+		fprintf(stderr, "%s", err_str);
+		return 1;
+	}
 
 	// profit ??
 	
