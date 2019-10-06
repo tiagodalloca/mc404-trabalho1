@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 
-unsigned power (unsigned val, unsigned exp) {
+unsigned long power (unsigned long val, unsigned exp) {
 	if (exp < 1) return 1;
 	return val*power(val, exp - 1);
 }
@@ -326,7 +326,7 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 				if (!isEsq) {
 					linhaAtual++;
 					(*len)++;
-			}
+				}
 				isEsq = !isEsq;
 				continue;
 			}
@@ -355,8 +355,8 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 					}
 					else {
 						fprintf(stderr, "%s %s\n", "ERRO: Rótulo ou símbolo usado mas não definido:", arg.palavra);
-							exit(1);
-						}
+						exit(1);
+					}
 				}
 
 				else {
@@ -464,17 +464,17 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 		if (ret[i].IsJumpEsquerda){
 			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeEsquerda);
 			if (ret[i].IsJumpEsquerda == 1)
-				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110)*power(16,5);
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110)*power(16,8);
 			else if (ret[i].IsJumpEsquerda == 2)
-				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000)*power(16,5);
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000)*power(16,8);
 		}
 
 		if (ret[i].IsJumpDireita){
 			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeDireita);
 			if (ret[i].IsJumpDireita == 1)
-				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110);
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110)*power(16,3);
 			else if (ret[i].IsJumpDireita == 2)
-				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000);
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000)*power(16,3);
 		}
 		
 		if (ret[i].IsPendendoEsquerda){
