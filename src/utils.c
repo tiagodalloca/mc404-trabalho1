@@ -201,9 +201,9 @@ unsigned getCodigoInstrucao (Token t) {
 	if (strigual(t.palavra, "STOREND"))
 		return 0b00010010;
 	if (strigual(t.palavra, "JUMP"))
-		return 0b00001110;
+		return 0b00001101;
 	if (strigual(t.palavra, "JGE"))
-		return 0b00010000;
+		return 0b00001111;
 	return 0;
 }
 
@@ -310,16 +310,17 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 
 			char ehJump = strigual(t.palavra, "JUMP");
 			char ehJge = strigual(t.palavra, "JGE");
-			if ((ehJump || ehJge) &&
+			char ehSte = strigual(t.palavra, "STOREND");
+			if ((ehJump || ehJge || ehSte) &&
 					arg.tipo == Nome) {
 				ret[*len].NumLinha = linhaAtual;
 				if (isEsq) {
-					ret[*len].IsJumpEsquerda = ehJump ? 1 : 2;
+					ret[*len].IsJSEEsquerda = ehJump ? 1 : ehJge ? 2 : 3;
 					ret[*len].IsPendendoEsquerda = 1;
 					ret[*len].RotuloPendendoNomeEsquerda = arg.palavra;
 				}
 				else {
-					ret[*len].IsJumpDireita = ehJump ? 1 : 2;
+					ret[*len].IsJSEDireita = ehJump ? 1 : ehJge ? 2 : 3;
 					ret[*len].IsPendendoDireita = 1;
 					ret[*len].RotuloPendendoNomeDireita = arg.palavra;
 				}
@@ -461,20 +462,24 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 	if (ret[*len].Value != 0) (*len)++;
 
 	for (unsigned i = 0; i < *len; i++) {
-		if (ret[i].IsJumpEsquerda){
+		if (ret[i].IsJSEEsquerda){
 			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeEsquerda);
-			if (ret[i].IsJumpEsquerda == 1)
+			if (ret[i].IsJSEEsquerda == 1)
 				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110)*power(16,8);
-			else if (ret[i].IsJumpEsquerda == 2)
+			else if (ret[i].IsJSEEsquerda == 2)
 				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000)*power(16,8);
+			else if (ret[i].IsJSEEsquerda == 3)
+				ret[i].Value += (!rotulo->IsEsquerda ? 0b00010011 : 0b00010010)*power(16,8);
 		}
 
-		if (ret[i].IsJumpDireita){
+		if (ret[i].IsJSEDireita){
 			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeDireita);
-			if (ret[i].IsJumpDireita == 1)
+			if (ret[i].IsJSEDireita == 1)
 				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110)*power(16,3);
-			else if (ret[i].IsJumpDireita == 2)
+			else if (ret[i].IsJSEDireita == 2)
 				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000)*power(16,3);
+			else if (ret[i].IsJSEDireita == 3)
+				ret[i].Value += (!rotulo->IsEsquerda ? 0b00010011 : 0b00010010)*power(16,3);
 		}
 		
 		if (ret[i].IsPendendoEsquerda){

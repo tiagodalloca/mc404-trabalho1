@@ -20,11 +20,11 @@ typedef struct {
 
 	char* RotuloPendendoNomeEsquerda;
 	char IsPendendoEsquerda;
-	char IsJumpEsquerda;
+	char IsJSEEsquerda;
 
 	char* RotuloPendendoNomeDireita;
 	char IsPendendoDireita;
-	char IsJumpDireita;
+	char IsJSEDireita;
 	
 } LinhaProtoMapa;
 
