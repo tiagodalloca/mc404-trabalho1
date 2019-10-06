@@ -31,8 +31,8 @@ int main(int args, char** argv)
     return ret;
   }
 
-  imprimeListaTokens();
-  return 0;
-
-  //return emitirMapaDeMemoria();
+  //imprimeListaTokens();
+  //return 0;
+  
+  return emitirMapaDeMemoria();
 }

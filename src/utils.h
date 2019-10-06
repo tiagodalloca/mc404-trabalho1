@@ -10,16 +10,22 @@ typedef struct {
 
 typedef struct {
 	char* Nome;
-	unsigned Valor;
+	unsigned long Valor;
 	char IsEsquerda;
 } RotuloDefinition;
 
 typedef struct {
-	unsigned NumLinha;
-	unsigned Value;
-	char PendendoRotulo;
-	char* RotuloPendendoNome;
+	unsigned long NumLinha;
+	unsigned long Value;
+
+	char* RotuloPendendoNomeEsquerda;
 	char IsPendendoEsquerda;
+	char IsJumpEsquerda;
+
+	char* RotuloPendendoNomeDireita;
+	char IsPendendoDireita;
+	char IsJumpDireita;
+	
 } LinhaProtoMapa;
 
 extern const short num_tipos_token;

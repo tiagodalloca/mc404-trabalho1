@@ -5,7 +5,7 @@
 #include <ctype.h>
 
 unsigned power (unsigned val, unsigned exp) {
-	if (exp < 1) return val;
+	if (exp < 1) return 1;
 	return val*power(val, exp - 1);
 }
 
@@ -187,9 +187,9 @@ unsigned getCodigoInstrucao (Token t) {
 	if (strigual(t.palavra, "ADDABS"))
 		return 0b00000111;
 	if (strigual(t.palavra, "SUB"))
-		return 0x00000110;
+		return 0b00000110;
 	if (strigual(t.palavra, "SUBABS"))
-		return 00001000;
+		return 0b00001000;
 	if (strigual(t.palavra, "MULT"))
 		return 0b00001011;
 	if (strigual(t.palavra, "DIV"))
@@ -201,15 +201,16 @@ unsigned getCodigoInstrucao (Token t) {
 	if (strigual(t.palavra, "STOREND"))
 		return 0b00010010;
 	if (strigual(t.palavra, "JUMP"))
-		return 0b00001101;
+		return 0b00001110;
 	if (strigual(t.palavra, "JGE"))
-		return 0b00001111;
+		return 0b00010000;
+	return 0;
 }
 
-void printLine(unsigned value, unsigned linhaNum) {
-	char buffer[10];
-	char toPrint[13];
-	sprintf(buffer, "%010x", value);
+void printLine(unsigned long value, unsigned linhaNum) {
+	char buffer[11];
+	char toPrint[14];
+	sprintf(buffer, "%010lX", value);
 
 	toPrint[0] = buffer[0];
 	toPrint[1] = buffer[1];
@@ -231,30 +232,37 @@ void printLine(unsigned value, unsigned linhaNum) {
 	toPrint[11] = buffer[8];
 	toPrint[12] = buffer[9];
 
-	printf("%03x %s", linhaNum, toPrint);
+	toPrint[13] = 0;
+
+	printf("%03X %s\n", linhaNum, toPrint);
 }
 
 unsigned parseValueToken(Token t) {
+	unsigned ret = 0;
 	if (t.tipo == Decimal)
-		return (unsigned) atoi(t.palavra);
-	if (t.tipo == Hexadecimal)
-		return (unsigned) strtol(t.palavra, (void*)0, 0);
-
-	fprintf(stderr, "%s \"%s\"", "ERRO: não foi possível fazer parde do valor ", t.palavra);
-	exit(1);
+		ret = (unsigned) atoi(t.palavra);
+	else if (t.tipo == Hexadecimal)
+		ret = (unsigned) strtol(t.palavra, (void*)0, 0);
+	else {
+		fprintf(stderr, "%s \"%s\"", "ERRO: não foi possível fazer parse do valor ", t.palavra);
+		exit(1);
+	}
+	return ret;
 }
 
 void getSymbolsValues (SymbolValue* ret, unsigned* len) {
 	*len = 0;
 	for (unsigned i = 0; i < getNumberOfTokens(); i++) {
 		Token* t = recuperaToken(i);
+		char* p = t->palavra;
+		for ( ; *p; ++p) *p = tolower(*p);
 		if (t->tipo == Diretiva && strigual(t->palavra, ".set")){
 			ret[(*len)++] = (SymbolValue) { recuperaToken(i+1)->palavra, parseValueToken(*recuperaToken(i+2)) };
 		}
 	}
 }
 
-char retrieveSymbolValue (SymbolValue* svs, unsigned len, char* sym, unsigned* ret) {
+char retrieveSymbolValue (SymbolValue* svs, unsigned len, char* sym, unsigned long* ret) {
 	for (unsigned i = 0; i < len; i++) {
 		if (strigual(svs[i].Sym, sym)) {
 			*ret = svs[i].Value;
@@ -276,7 +284,7 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 
 	*len = 0;
 	char isEsq = 1;
-	unsigned linhaAtual = 0;
+	unsigned long linhaAtual = 0;
 	unsigned numTokens = getNumberOfTokens();
 
 	RotuloDefinition rotulosDefinitions[1000];
@@ -286,40 +294,73 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 		Token t = *recuperaToken(i);
 		
 		if (t.tipo == DefRotulo) {
-			rotulosDefinitions[rotulosDefinitions_len++].IsEsquerda = isEsq;
+			rotulosDefinitions[rotulosDefinitions_len].IsEsquerda = isEsq;
 			t.palavra[strlen(t.palavra)-1] = 0;
 			rotulosDefinitions[rotulosDefinitions_len].Nome = t.palavra;
 			rotulosDefinitions[rotulosDefinitions_len].Valor = linhaAtual;
+			rotulosDefinitions_len++;
 		}
 
 		else if (t.tipo == Instrucao) {
-			unsigned val = 0;
-			LinhaProtoMapa linha = {linhaAtual, 0, 0, (char*) 0, 0};
+
+			char* p = t.palavra;
+			for ( ; *p; ++p) *p = toupper(*p);
 
 			Token arg = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
+
+			char ehJump = strigual(t.palavra, "JUMP");
+			char ehJge = strigual(t.palavra, "JGE");
+			if ((ehJump || ehJge) &&
+					arg.tipo == Nome) {
+				ret[*len].NumLinha = linhaAtual;
+				if (isEsq) {
+					ret[*len].IsJumpEsquerda = ehJump ? 1 : 2;
+					ret[*len].IsPendendoEsquerda = 1;
+					ret[*len].RotuloPendendoNomeEsquerda = arg.palavra;
+				}
+				else {
+					ret[*len].IsJumpDireita = ehJump ? 1 : 2;
+					ret[*len].IsPendendoDireita = 1;
+					ret[*len].RotuloPendendoNomeDireita = arg.palavra;
+				}
+				if (!isEsq) {
+					linhaAtual++;
+					(*len)++;
+			}
+				isEsq = !isEsq;
+				continue;
+			}
+
+			unsigned long val = 0;
 
 			unsigned codigoInstrucao = getCodigoInstrucao(t);
 
 			if (arg.tipo != Instrucao && arg.tipo != Diretiva) {
 
 				if (arg.tipo == Nome){
-					unsigned argVal = 0;
+					unsigned long argVal = 0;
 					if (retrieveSymbolValue(symbolsValues, symbolsValues_len, arg.palavra, &argVal)) {
 						val = codigoInstrucao*power(16, 3) + argVal;
 					}
 					else if (isRotuloDefinido(rotulosDefinidos, rotulosDefinidos_len, arg.palavra)) {
 						val = codigoInstrucao*power(16, 3);
-						linha.RotuloPendendoNome = arg.palavra;
-						linha.PendendoRotulo = 1;
-						linha.IsPendendoEsquerda = isEsq;
+						if (isEsq){
+							ret[*len].RotuloPendendoNomeEsquerda = arg.palavra;
+							ret[*len].IsPendendoEsquerda = 1;
+						}	
+						else {
+							ret[*len].RotuloPendendoNomeDireita = arg.palavra;
+							ret[*len].IsPendendoDireita = 1;
+						}
 					}
 					else {
-						fprintf(stderr, "%s \"%s\"", "ERRO: Rótulo ou símbolo usado mas não definido:", arg.palavra);
-					}
+						fprintf(stderr, "%s %s\n", "ERRO: Rótulo ou símbolo usado mas não definido:", arg.palavra);
+							exit(1);
+						}
 				}
 
 				else {
-					val = codigoInstrucao*power(16, 3) + parseValueToken(t);
+					val = codigoInstrucao*power(16, 3) + parseValueToken(arg);
 				}
 			}
 			 
@@ -328,11 +369,12 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 			}
 
 			if (isEsq) {
-				linha.Value = val*power(16, 5);
-				ret[(*len)] = linha;
+				ret[(*len)].NumLinha = linhaAtual;
+				ret[(*len)].Value = val*power(16, 5);
 			}	
 			else {
-				ret[*len].Value = ret[*len].Value + val;
+				ret[(*len)].NumLinha = linhaAtual;
+				ret[*len].Value += val;
 				linhaAtual++;
 				(*len)++;
 			}
@@ -341,7 +383,10 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 		}
 
 		else if (t.tipo == Diretiva) {
-			if (strigual(t.palavra, ".word")){
+			char* p = t.palavra;
+			for ( ; *p; ++p) *p = tolower(*p);
+
+			if (strigual(t.palavra, ".word")) {
 
 				if (!isEsq) {
 					isEsq = 1;
@@ -350,75 +395,95 @@ void processarTokens (LinhaProtoMapa* ret, unsigned* len) {
 				}
 
 				Token arg = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
-				unsigned val;
-				LinhaProtoMapa linha = { linhaAtual, 0, 0, (char*) 0, 0 };
+				LinhaProtoMapa linha = { linhaAtual, 0, (char*) 0, 0, 0, (char*) 0, 0, 0};
 				
 				if (arg.tipo == Nome){
-					unsigned argVal = 0;
+					unsigned long argVal = 0;
 					if (retrieveSymbolValue(symbolsValues, symbolsValues_len, arg.palavra, &argVal)) {
 						linha.Value = argVal;
 					}
 					else if (isRotuloDefinido(rotulosDefinidos, rotulosDefinidos_len, arg.palavra)) {
 						linha.Value = 0;
-						linha.PendendoRotulo = 1;
-						linha.IsPendendoEsquerda = 0;
-						linha.RotuloPendendoNome = arg.palavra;
+						linha.IsPendendoDireita = 1;
+						linha.RotuloPendendoNomeDireita = arg.palavra;
 					}
 				}
 
 				else {
-					unsigned val = parseValueToken(t);
+					linha.Value = parseValueToken(arg);
 				}
 
 				ret[*len] = linha;
 				linhaAtual++;
 				(*len)++;
 			}
-		}
 
-		else if (strigual(t.palavra, ".org")){
-			Token arg = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
-			unsigned val = parseValueToken(arg);
-			linhaAtual = val;
-		}
+			else if (strigual(t.palavra, ".org")){
+				Token arg = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
+				unsigned val = parseValueToken(arg);
+				linhaAtual = val;
+			}
 
-		else if (strigual(t.palavra, ".wfill")) {
-			Token arg1 = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
-			Token arg2 = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
-			unsigned val1 = parseValueToken(arg1);
-			unsigned val2 = 0;
+			else if (strigual(t.palavra, ".wfill")) {
+				Token arg1 = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
+				Token arg2 = i < numTokens - 1 ? *recuperaToken(i + 2) : (Token) { Instrucao, (char*) 0, 0 };
+				unsigned long val1 = parseValueToken(arg1);
+				unsigned long val2 = 0;
 
-			if (arg2.tipo == Nome) {
-				if (! retrieveSymbolValue(symbolsValues, symbolsValues_len, arg2.palavra, &val2)) {
-					fprintf(stderr, "%s \"%s\"", "ERRO: Rótulo ou símbolo usado mas não definido:", arg2.palavra);
-					exit(1);
+				if (arg2.tipo == Nome) {
+					if (! retrieveSymbolValue(symbolsValues, symbolsValues_len, arg2.palavra, &val2)) {
+						fprintf(stderr, "%s %s\n", "ERRO: Rótulo ou símbolo usado mas não definido:", arg2.palavra);
+						exit(1);
+					}
+				}
+				else {
+					val2 = parseValueToken(arg2);
+				}
+
+				for (unsigned j = 0; j < val1; j++) {
+					ret[(*len)++] = (LinhaProtoMapa) { linhaAtual, val2, (char*) 0, 0, 0, (char*) 0, 0, 0 };
+					linhaAtual++;
 				}
 			}
-			else {
-				unsigned val2 = parseValueToken(arg2);
-			}
 
-			for (unsigned j = 0; j < val1; j++) {
-				ret[(*len)++] = (LinhaProtoMapa) { linhaAtual, val2, 0, (char*) 0, 0 };
-				linhaAtual++;
-			}
-		}
+			else if (strigual(t.palavra, ".align")) {
+				Token arg = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
+				unsigned long argVal = parseValueToken(arg);
 
-		else if (strigual(t.palavra, ".align")) {
-			Token arg = i < numTokens - 1 ? *recuperaToken(i + 1) : (Token) { Instrucao, (char*) 0, 0 };
-			unsigned argVal = parseValueToken(arg);
-
-			while (!isEsq && linhaAtual % argVal != 0){
-				linhaAtual++;
-				isEsq = 1;
+				while (!isEsq || linhaAtual % argVal != 0){
+					linhaAtual++;
+					isEsq = 1;
+				}
 			}
 		}
 	}
 
+	if (ret[*len].Value != 0) (*len)++;
+
 	for (unsigned i = 0; i < *len; i++) {
-		if (ret[i].PendendoRotulo){
-			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNome);
-			ret[i].Value += rotulo->Valor*(ret[i].IsPendendoEsquerda ? power(16,5) : 1);
+		if (ret[i].IsJumpEsquerda){
+			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeEsquerda);
+			if (ret[i].IsJumpEsquerda == 1)
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110)*power(16,5);
+			else if (ret[i].IsJumpEsquerda == 2)
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000)*power(16,5);
+		}
+
+		if (ret[i].IsJumpDireita){
+			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeDireita);
+			if (ret[i].IsJumpDireita == 1)
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001101 : 0b00001110);
+			else if (ret[i].IsJumpDireita == 2)
+				ret[i].Value += (rotulo->IsEsquerda ? 0b00001111 : 0b00010000);
+		}
+		
+		if (ret[i].IsPendendoEsquerda){
+			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeEsquerda);
+			ret[i].Value += rotulo->Valor*power(16,5);
+		}
+		if (ret[i].IsPendendoDireita){
+			RotuloDefinition* rotulo = getRotuloDefinition(rotulosDefinitions, *len, ret[i].RotuloPendendoNomeDireita);
+			ret[i].Value += rotulo->Valor;
 		}
 	}
 }

@@ -16,5 +16,6 @@ int emitirMapaDeMemoria()
 	LinhaProtoMapa protoMapa[1024];
 	unsigned len;
 	processarTokens(protoMapa, &len);
+	printarProtoMapa(protoMapa, len);
 	return 0;
 }
