@@ -75,22 +75,22 @@ int processarEntrada(char* entrada, unsigned tamanho) {
 			 
 
 		if (! strchr(" \n", c))
-					strappc(palavra, c);
+			strappc(palavra, c);
 		
 		else {
 			if (palavra[0]) {
 				char *palavra_copia = (char*) malloc(sizeof(char) * 256);
 				strcpy(palavra_copia, palavra);
 				if (addToken(palavra_copia, linha))
-						palavra[0] = '\0';
-					else{
-						get_erro_lexico_string(err_str, linha);
-						fprintf(stderr, "%s\n", err_str);
+					palavra[0] = '\0';
+				else{
+					get_erro_lexico_string(err_str, linha);
+					fprintf(stderr, "%s\n", err_str);
 
-						free(palavra);
+					free(palavra);
 						
-						return 1;
-					}
+					return 1;
+				}
 			}
 
 			if (c == '\n') linha++;

@@ -1,4 +1,6 @@
+#include "utils.h"
 #include "montador.h"
+#include "token.h"
 #include <stdio.h>
 
 
@@ -11,6 +13,8 @@
  */
 int emitirMapaDeMemoria()
 {
-    /* printf("Voce deve implementar essa função para a Parte 2!");*/
-    return 0;
+	LinhaProtoMapa protoMapa[1024];
+	unsigned len;
+	processarTokens(protoMapa, &len);
+	return 0;
 }

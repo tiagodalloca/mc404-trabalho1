@@ -2,6 +2,7 @@
 #define TOKEN_H
 
 #define MAXTOKENS 4096
+
 /*
  * Este arquivo contém as definições da estrutura Token.
  * Uma lista estatica (vetor), de 4096 Tokens, já esta implementada (token.c) e pronta para ser utilizada.
